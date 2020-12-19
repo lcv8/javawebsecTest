@@ -25,7 +25,7 @@
 				<select name="booktype">
 					<option value="-1">--请选择--</option>
 					<c:forEach items="${types }" var="type">
-						<option value='${type.bookTypeId }'
+						<option value="${type.bookTypeId }"
 							<c:if test="${bookinfoQueryPar.bookTypeId == type.bookTypeId }">
 								selected="selected"
 							</c:if>
@@ -75,7 +75,7 @@
 						<td>${book.bookCode }</td>
 						<td>${book.bookType.bookTypeName }</td>
 						<td>${book.bookName }</td>
-						<td>${book.bookAnthor }</td>
+						<td>${book.bookAuthor }</td>
 						<td>${book.publishPress }</td>
 						<td>
 							<!-- 原则上这个请求用AJAX非常方便 -->

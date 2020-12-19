@@ -5,7 +5,7 @@ package com.hui.entity;
  */
 public class BookType {
     private Integer bookTypeId;
-    private String typeName;
+    private String bookTypeName;
 
     public Integer getBookTypeId() {
         return bookTypeId;
@@ -16,12 +16,12 @@ public class BookType {
         return this;
     }
 
-    public String getTypeName() {
-        return typeName;
+    public String getBookTypeName() {
+        return bookTypeName;
     }
 
-    public BookType setTypeName(String typeName) {
-        this.typeName = typeName;
+    public BookType setBookTypeName(String bookTypeName) {
+        this.bookTypeName = bookTypeName;
         return this;
     }
 
@@ -29,7 +29,7 @@ public class BookType {
     public String toString() {
         return "BookType{" +
                 "bookTypeId=" + bookTypeId +
-                ", typeName='" + typeName + '\'' +
+                ", bookTypeName='" + bookTypeName + '\'' +
                 '}';
     }
 }

@@ -26,7 +26,7 @@ public class BooksDaoImpl extends BaseDao implements BookDao {
             while (resultSet.next()){
                 BookType typeTmpe = new BookType();
                 typeTmpe.setBookTypeId(resultSet.getInt("id"));
-                typeTmpe.setTypeName(resultSet.getString("type_name"));
+                typeTmpe.setBookTypeName(resultSet.getString("type_name"));
                 bookTypes.add(typeTmpe);
             }
         } catch (SQLException throwables) {
@@ -46,12 +46,13 @@ public class BooksDaoImpl extends BaseDao implements BookDao {
             sql.append(" bif.book_id bif_id , bif.book_code bif_code , ");
             sql.append(" bif.book_name bif_name , bif.book_type bif_type , ");
             sql.append(" bif.book_author bif_author , bif.publish_press bif_press , ");
-            sql.append(" bif.publish_date bif_date , bif.is_borrow bif_is_borrow , ");
-            sql.append(" bif.createdBy bif_by , ");
-            sql.append(" bt.id bt_id , bt.type_name bt_name , ");
-            sql.append(" WHERE ");
-            sql.append(" book_info bif , book_type bt  ");
-            sql.append(" WHERE AND bif.book_type = bt.id ");
+            sql.append(" bif.publish_date bif_publish_date , bif.is_borrow bif_is_borrow , ");
+            sql.append(" bif.createdBy bif_createdBy , ");
+            sql.append(" bt.id bt_id , bt.type_name bt_name  ");
+            sql.append(" FROM ");
+            sql.append(" book_info bif , book_type bt ");
+            sql.append(" WHERE  ");
+            sql.append(" bif.book_type = bt.id ");
 
             if(bookInfo != null){
                 if(bookInfo.getBookId() != null){
@@ -61,7 +62,7 @@ public class BooksDaoImpl extends BaseDao implements BookDao {
                     sql.append(" AND bif.book_type = ? ");
                 }
                 if(bookInfo.getBookName() != null){
-                    sql.append(" AND bif.book_name LIKE concat( '%' '?' '%' ) ");
+                    sql.append(" AND bif.book_name LIKE concat( '%',?,'%' ) ");
                 }
                 if(bookInfo.getIsBorrow() != null){
                     sql.append(" AND bif.is_borrow = ? ");
@@ -71,6 +72,7 @@ public class BooksDaoImpl extends BaseDao implements BookDao {
             if(page != null){
                 sql.append(" LIMIT ? , ? ");
             }
+            System.out.println(sql.toString());
             PreparedStatement statement = conn.prepareStatement(String.valueOf(sql));
             int index = 0;
             if(bookInfo != null){
@@ -91,24 +93,23 @@ public class BooksDaoImpl extends BaseDao implements BookDao {
                 statement.setObject(++index,page.getIndex());
                 statement.setObject(++index,page.getSize());
             }
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()){
-                BookInfo infoTmpe = new BookInfo();
-                infoTmpe.setBookId(resultSet.getInt("bif_id"));
-                infoTmpe.setBookTypeId(resultSet.getInt("bif_type"));
-                infoTmpe.setBookName(resultSet.getString("bif_name"));
-                infoTmpe.setIsBorrow(resultSet.getInt("bif_is_borrow"));
-                infoTmpe.setBookCode(resultSet.getString("bif_code"));
-                infoTmpe.setBookAuthor(resultSet.getString("bif_author"));
-                infoTmpe.setPublishPress(resultSet.getString("bif_press"));
-                infoTmpe.setPublishDate(resultSet.getDate("bif_date"));
-                infoTmpe.setCreateBy(resultSet.getInt("bif_by"));
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()){
+                BookInfo bif = new BookInfo();
+                bif.setBookId(rs.getInt("bif_id"));
+                bif.setBookCode(rs.getString("bif_code"));
+                bif.setBookName(rs.getString("bif_name"));
+                bif.setBookTypeId(rs.getInt("bif_type"));
+                bif.setBookAuthor(rs.getString("bif_author"));
+                bif.setPublishPress(rs.getString("bif_press"));
+                bif.setPublishDate(rs.getDate("bif_publish_date"));
+                bif.setIsBorrow(rs.getInt("bif_is_borrow"));
+                bif.setCreateBy(rs.getInt("bif_createdBy"));
                 BookType type = new BookType();
-                type.setTypeName(resultSet.getString("bt_name"));
-                type.setBookTypeId(resultSet.getInt("bt_id"));
-                bookTypes.add(infoTmpe);
-                infoTmpe.setBookType(type);
-                bookTypes.add(infoTmpe);
+                type.setBookTypeId(rs.getInt("bif_type"));
+                type.setBookTypeName(rs.getString("bt_name"));
+                bif.setBookType(type);
+                bookTypes.add(bif);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();

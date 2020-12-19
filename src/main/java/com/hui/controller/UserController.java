@@ -17,7 +17,25 @@ import java.util.List;
 public class UserController {
     private UserService service = new UserServiceImpl();
 
-    public void login(HttpServletRequest req, HttpServletResponse resp) {
+    public void login(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        Users users = new Users()
+                .setUserCode(req.getParameter("username"))
+                .setPassword(req.getParameter("password"));
+        String code = service.checkUsers(users,"login");
+        req.setAttribute("users", users);
+        switch (code) {
+            case "100":
+                Users user = service.queryUser(users).get(0);
+                req.getSession().setAttribute("loginUsers",user);
+                resp.sendRedirect(req.getAttribute("basePath")+"/books/toListBooks.do");
+                return;
+            case "105":
+                req.setAttribute("message", CheckUsesMessage.MSG_105);
+                req.getRequestDispatcher("/jsp/login.jsp").forward(req,resp);
+                return;
+            default:
+                return;
+        }
     }
 
     public void regiest(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
@@ -26,7 +44,7 @@ public class UserController {
                 .setPassword(req.getParameter("password"))
                 .setGender(Integer.valueOf(req.getParameter("sex")))
                 .setEmail(req.getParameter("email"));
-        String code = service.checkUsers(users);
+        String code = service.checkUsers(users,"reg");
         switch (code) {
             case "100":
                 service.insertUser(users);
@@ -67,7 +85,9 @@ public class UserController {
         writer.flush();
     }
 
-    public void logout(HttpServletRequest req, HttpServletResponse resp) {
+    public void logout(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        req.getSession().invalidate();
+        resp.sendRedirect(req.getAttribute("basePath")+"/jsp/login.jsp");
     }
 
     public void update(HttpServletRequest req, HttpServletResponse resp) {

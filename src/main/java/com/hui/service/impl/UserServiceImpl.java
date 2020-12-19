@@ -27,18 +27,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String checkUsers(Users users) {
-        if(users.getUserCode() == null || users.getUserCode().trim().equals("")
-                || users.getPassword() == null || users.getPassword().trim().equals("")){
-            return "101";
+    public String checkUsers(Users users,String code) {
+        if("reg".equals(code)){
+            if(users.getUserCode() == null || users.getUserCode().trim().equals("")
+                    || users.getPassword() == null || users.getPassword().trim().equals("")){
+                return "101";
+            }
+            if(users.getGender() == null || users.getGender() == -1){
+                return "104";
+            }
+            List<Users> list = this.queryUser(new Users().setUserCode(users.getUserCode()));
+            if(list.size() != 0){
+                return "102";
+            }
+        } else if("login".equals(code)){
+            List<Users> list = this.queryUser(new Users()
+                    .setUserCode(users.getUserCode())
+                    .setPassword(users.getPassword()));
+            if(list.size() != 1){
+                return "105";
+            }
         }
-        if(users.getGender() == null || users.getGender() == -1){
-            return "104";
-        }
-        List<Users> list = this.queryUser(new Users().setUserCode(users.getUserCode()));
-        if(list.size() != 0){
-            return "102";
-        }
+
         return "100";
     }
 }

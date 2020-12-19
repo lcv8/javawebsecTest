@@ -8,5 +8,5 @@ public interface UserService {
     List<Users> queryUser(Users users);
     int insertUser(Users users);
     int updateUser(Users users);
-    String checkUsers(Users users);
+    String checkUsers(Users users,String code);
 }
