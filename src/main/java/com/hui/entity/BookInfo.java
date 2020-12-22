@@ -70,7 +70,7 @@ public class BookInfo {
         return bookTypeId;
     }
 
-    public BookInfo setBookTypeId(Integer bookType) {
+    public BookInfo setBookTypeId(Integer bookTypeId) {
         this.bookTypeId = bookTypeId;
         return this;
     }

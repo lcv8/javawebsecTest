@@ -25,7 +25,7 @@
 				<select name="booktype">
 					<option value="-1">--请选择--</option>
 					<c:forEach items="${types }" var="type">
-						<option value='${type.bookTypeId }'
+						<option value="${type.bookTypeId }"
 							<c:if test="${bookinfoQueryPar.bookTypeId == type.bookTypeId }">
 								selected="selected"
 							</c:if>
