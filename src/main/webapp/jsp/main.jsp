@@ -13,8 +13,50 @@
 <base href="<%=basePath %>"/>
 <meta charset="UTF-8">
 <title>主页</title>
+<style type="text/css">
+	.borrow{
+		cursor: pointer;
+	}
+</style>
+<script type="text/javascript" src="<%=basePath %>/js/jquery.js"></script>
+<script type="text/javascript">
+$(function(){
+	console.log(isQueryBorrow)
+	$(".borrow").each(function(index,ele){
+		$(ele).click(function(){
+			var bookId = $(this).attr("bookId");
+			var borrow = $(this).attr("borrow");
+			$.post("<%=basePath %>/books/borrow.do",
+				{"id":bookId,"borrow":borrow},
+				function(data){
+					if(data=="true"){
+						var isQueryBorrow = $("#isQueryBorrow").val();
+						if(isQueryBorrow == null || isQueryBorrow == "" || isQueryBorrow == undefined){
+							isQueryBorrow = -1;
+						}
+						console.log(isQueryBorrow);
+						if(isQueryBorrow == -1){
+							$(ele).attr("borrow",borrow=="1"?"0":"1");
+							$(ele).text(borrow=="1"?"[归还]":"[借阅]");
+							$(ele).css("color",borrow=="1"?"red":"blue");
+							$(ele).parent().find(".str").text(borrow=="1"?"已借阅":"未借阅");
+							$(ele).parent().find(".str").css("color",borrow=="1"?"red":"green");
+						}else if(isQueryBorrow == "1"){
+							$(ele).parents("tr").remove();
+							console.log($(ele).parents("tr"));
+						}else if(isQueryBorrow == 0){
+							$(ele).parents("tr").remove();
+							console.log($(ele).parents("tr"));
+						}
+					}else if(data=="false"){}
+			});
+		})
+	});
+});
+</script>
 </head>
 <body>
+	<input type="hidden" id="isQueryBorrow" value="${bookinfoQueryPar.isBorrow}"/>
 	<c:if test="${empty loginUsers}">
 		尚未<a href="<%=basePath %>/jsp/login.jsp">[登入]</a>
 	</c:if>
@@ -25,7 +67,7 @@
 				<select name="booktype">
 					<option value="-1">--请选择--</option>
 					<c:forEach items="${types }" var="type">
-						<option value="${type.bookTypeId }"
+						<option value='${type.bookTypeId }'
 							<c:if test="${bookinfoQueryPar.bookTypeId == type.bookTypeId }">
 								selected="selected"
 							</c:if>
@@ -80,12 +122,18 @@
 						<td>
 							<!-- 原则上这个请求用AJAX非常方便 -->
 							<c:if test="${book.isBorrow == 0 }">
-								<span style="color:green;">未借阅</span>
-								<a href="<%=basePath %>/books/updateBooks.do?bookId=${book.bookId }&isBorrowUpdate=1&booktype=${bookinfoQueryPar.bookTypeId}&bookname=${bookinfoQueryPar.bookName}&isBorrow=${bookinfoQueryPar.isBorrow}">[借阅]</a>
+								<span class="str" style="color:green;">未借阅</span>
+								<span class="borrow" bookId="${book.bookId }"  borrow="1" style="color:blue;">[借阅]</span>
+								<!-- 
+								<a href="<%=basePath %>/books/updateBooks.do?bookId=${book.bookId }&isBorrowUpdate=1&booktype=${bookinfoQueryPar.bookTypeId}&bookname=${bookinfoQueryPar.bookName}&isBorrow=${bookinfoQueryPar.isBorrow}&pageNumber=${page.pageNumber}">[借阅]</a>
+								 -->
 							</c:if>
 							<c:if test="${book.isBorrow == 1 }">
-								<span style="color:red;">已借阅</span>
-								<a href="<%=basePath %>/books/updateBooks.do?bookId=${book.bookId }&isBorrowUpdate=0&booktype=${bookinfoQueryPar.bookTypeId}&bookname=${bookinfoQueryPar.bookName}&isBorrow=${bookinfoQueryPar.isBorrow}">[归还]</a>
+								<span class="str" style="color:red;">已借阅</span>
+								<span class="borrow" bookId="${book.bookId }"  borrow="0" style="color:blue;">[归还]</span>
+								<!-- 
+								<a href="<%=basePath %>/books/updateBooks.do?bookId=${book.bookId }&isBorrowUpdate=0&booktype=${bookinfoQueryPar.bookTypeId}&bookname=${bookinfoQueryPar.bookName}&isBorrow=${bookinfoQueryPar.isBorrow}&pageNumber=${page.pageNumber}">[归还]</a>
+								 -->
 							</c:if>
 						</td>
 					</tr>
@@ -93,11 +141,11 @@
 			</table>
 		</div>
 		<div>
-			<a href="">首页</a>
-			<a href="">上一页</a>
-			当前 页/总计 页
-			<a href="">下一页</a>
-			<a href="">尾页</a>
+			<a href="<%=basePath %>/books/toListBooks.do?pageNumber=1&booktype=${bookinfoQueryPar.bookTypeId}&bookname=${bookinfoQueryPar.bookName}&isBorrow=${bookinfoQueryPar.isBorrow}">首页</a>
+			<a href="<%=basePath %>/books/toListBooks.do?pageNumber=${(page.pageNumber==1)?1:(page.pageNumber-1)}&booktype=${bookinfoQueryPar.bookTypeId}&bookname=${bookinfoQueryPar.bookName}&isBorrow=${bookinfoQueryPar.isBorrow}">上一页</a>
+			当前第[${page.pageNumber}]页/总计[${page.pageCount}]页
+			<a href="<%=basePath %>/books/toListBooks.do?pageNumber=${(page.pageNumber==page.pageCount)?page.pageCount:(page.pageNumber+1)}&booktype=${bookinfoQueryPar.bookTypeId}&bookname=${bookinfoQueryPar.bookName}&isBorrow=${bookinfoQueryPar.isBorrow}">下一页</a>
+			<a href="<%=basePath %>/books/toListBooks.do?pageNumber=${page.pageCount}&booktype=${bookinfoQueryPar.bookTypeId}&bookname=${bookinfoQueryPar.bookName}&isBorrow=${bookinfoQueryPar.isBorrow}">尾页</a>
 		</div>
 	</c:if>
 </body>

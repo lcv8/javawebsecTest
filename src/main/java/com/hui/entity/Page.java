@@ -1,7 +1,7 @@
 package com.hui.entity;
 
 public class Page {
-    private Integer size;
+    private Integer size = 5;
     private Integer pageNumber;
     private Integer pageCount;
     private Integer index;

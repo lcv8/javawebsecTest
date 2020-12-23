@@ -62,7 +62,7 @@ public class BooksDaoImpl extends BaseDao implements BookDao {
                     sql.append(" AND bif.book_type = ? ");
                 }
                 if(bookInfo.getBookName() != null){
-                    sql.append(" AND bif.book_name LIKE concat( '%','?','%' ) ");
+                    sql.append(" AND bif.book_name LIKE concat( '%',?,'%' ) ");
                 }
                 if(bookInfo.getIsBorrow() != null){
                     sql.append(" AND bif.is_borrow = ? ");

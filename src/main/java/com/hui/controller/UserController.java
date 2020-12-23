@@ -85,9 +85,12 @@ public class UserController {
         PrintWriter writer = resp.getWriter();
         writer.write(String.valueOf(flag));
         writer.flush();
+        writer.close();
     }
 
-    public void logout(HttpServletRequest req, HttpServletResponse resp) {
+    public void logout(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        req.getSession().invalidate();//让session失效
+        resp.sendRedirect(req.getAttribute("basePath")+"/jsp/login.jsp");
     }
 
     public void update(HttpServletRequest req, HttpServletResponse resp) {

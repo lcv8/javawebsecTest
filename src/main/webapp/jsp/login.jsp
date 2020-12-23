@@ -11,10 +11,9 @@
 	<head>
 		<base href="<%=basePath %>"/>
 		<meta charset="UTF-8">
-		<title>登入</title>
-		<link rel="stylesheet" type="text/css" href="<%=basePath %>/css/login.css"/>
 		<script type="text/javascript" src="<%=basePath %>/js/jquery.js"></script>
-		<script type="text/javascript" src="<%=basePath %>/js/login.js"></script>
+		<link rel="stylesheet" href="<%=basePath %>/css/login.css"/>
+		<title>登入</title>
 	</head>
 	<body>
 		<div class="body">

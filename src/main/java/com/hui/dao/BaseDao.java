@@ -21,7 +21,7 @@ public abstract class BaseDao {
     private String maxActive;
     private String minIdle;
     private ThreadLocal<Connection> connection = new ThreadLocal<>();
-    private BasicDataSource bds = new BasicDataSource();
+    //private BasicDataSource bds = new BasicDataSource();
     public BaseDao(){
         Properties properties = new Properties();
         //InputStream resource = BaseDao.class.getResourceAsStream("jdbc.properties");
@@ -35,15 +35,18 @@ public abstract class BaseDao {
             initialSize = properties.getProperty("initialSize");
             maxActive = properties.getProperty("maxActive");
             minIdle = properties.getProperty("minIdle");
+            Class.forName(driverClass);
             //创建连接池
-            bds.setUsername(user);
+            /*bds.setUsername(user);
             bds.setUrl(url);
             bds.setPassword(password);
             bds.setDriverClassName(driverClass);
             bds.setInitialSize(Integer.valueOf(initialSize));
             bds.setMaxIdle(Integer.valueOf(maxActive));
-            bds.setMinIdle(Integer.valueOf(minIdle));
+            bds.setMinIdle(Integer.valueOf(minIdle));*/
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -56,7 +59,7 @@ public abstract class BaseDao {
         if(connection.get() != null){
             return connection.get();
         } else {
-            Connection conn = this.bds.getConnection();
+            Connection conn = DriverManager.getConnection(url,user,password);
             conn.setAutoCommit(autoCommit);
             this.connection.set(conn);
             return conn;
